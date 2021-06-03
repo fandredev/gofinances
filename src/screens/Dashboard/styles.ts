@@ -1,11 +1,11 @@
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { Feather } from '@expo/vector-icons';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { FlatList } from 'react-native';
+import { BorderlessButton } from 'react-native-gesture-handler';
+import { getBottomSpace, getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
+import { DataListProps } from '.';
 
-import { DataListProps } from '.'
-import { FlatList } from 'react-native'
 
 
 export const Container = styled.View`
@@ -31,6 +31,9 @@ export const UserWrapper = styled.View`
 export const UserInfo = styled.View`
   flex-direction: row;
   align-items: center;
+`
+export const LogoutButton = styled(BorderlessButton)`
+
 `
 export const Photo = styled.Image`
   width: ${RFValue(48)}px;
@@ -74,7 +77,7 @@ export const Title = styled.Text`
 `
 
 export const TransacionList = styled(FlatList as new () => FlatList<DataListProps>).attrs({
-  showsVerticalScrollIndicator: false, 
+  showsVerticalScrollIndicator: false,
   contentContainerStyle: { paddingBottom: getBottomSpace() }
 })`
   
