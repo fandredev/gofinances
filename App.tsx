@@ -6,6 +6,8 @@ import {
 } from "@expo-google-fonts/poppins";
 import { NavigationContainer } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
+import "intl";
+import "intl/locale-data/jsonp/pt-BR";
 import React from "react";
 import "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
