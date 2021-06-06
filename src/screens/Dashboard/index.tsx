@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/core";
 import React, { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+import { useTheme } from "styled-components";
 import { HighlightCard } from "../../components/HighlightCard";
 import {
   TransactionCard,
@@ -11,6 +13,7 @@ import {
   Header,
   HighLightCards,
   Icon,
+  LoadingContainer,
   LogoutButton,
   Photo,
   Title,
@@ -26,17 +29,35 @@ import {
 export interface DataListProps extends TransactionCardProps {
   id: string;
 }
+interface HighlightProps {
+  amount: string;
+}
+interface HighlightData {
+  entries: HighlightProps;
+  expensives: HighlightProps;
+  total: HighlightProps;
+}
 
 export function Dashboard() {
-  const [data, setData] = useState<DataListProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const theme = useTheme();
+  const [transactions, setTransactions] = useState<DataListProps[]>([]);
+  const [highlightData, setHighlightData] = useState<HighlightData>(
+    {} as HighlightData
+  );
 
   async function loadTransactions() {
     const dataKey = "@gofinances:transactions";
     const response = await AsyncStorage.getItem(dataKey);
     const transactions = response ? JSON.parse(response) : [];
 
+    let entriesTotal = 0;
+    let expensiveTotal = 0;
+
     const transactionsFormatted: DataListProps[] = transactions.map(
       ({ amount, date, id, name, type, category }: DataListProps) => {
+        if (type === "positive") entriesTotal += Number(amount);
+        else expensiveTotal += Number(amount);
         const amountFormatted = Number(amount).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
@@ -57,7 +78,29 @@ export function Dashboard() {
         };
       }
     );
-    setData(transactionsFormatted);
+    setTransactions(transactionsFormatted);
+    const total = entriesTotal - expensiveTotal;
+    setHighlightData({
+      entries: {
+        amount: entriesTotal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+      expensives: {
+        amount: expensiveTotal.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+      total: {
+        amount: total.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+      },
+    });
+    setIsLoading(false);
   }
   useEffect(() => {
     loadTransactions();
@@ -70,52 +113,60 @@ export function Dashboard() {
   );
   return (
     <Container>
-      <Header>
-        <UserWrapper>
-          <UserInfo>
-            <Photo
-              source={{
-                uri: "https://avatars.githubusercontent.com/u/49297012?s=400&u=b81857d568dad56456f1ece5f85fcec0ca99739b&v=4",
-              }}
+      {isLoading ? (
+        <LoadingContainer>
+          <ActivityIndicator color={theme.colors.primary} size="large" />
+        </LoadingContainer>
+      ) : (
+        <>
+          <Header>
+            <UserWrapper>
+              <UserInfo>
+                <Photo
+                  source={{
+                    uri: "https://avatars.githubusercontent.com/u/49297012?s=400&u=b81857d568dad56456f1ece5f85fcec0ca99739b&v=4",
+                  }}
+                />
+                <User>
+                  <UserGreeting>Olá, </UserGreeting>
+                  <UserName>Felipe</UserName>
+                </User>
+              </UserInfo>
+              <LogoutButton onPress={() => {}}>
+                <Icon name="power" />
+              </LogoutButton>
+            </UserWrapper>
+          </Header>
+          <HighLightCards>
+            <HighlightCard
+              title="Entradas"
+              amount={highlightData.entries.amount}
+              lastTransaction="Última entrada dia 13 de abril"
+              type="up"
             />
-            <User>
-              <UserGreeting>Olá, </UserGreeting>
-              <UserName>Felipe</UserName>
-            </User>
-          </UserInfo>
-          <LogoutButton onPress={() => {}}>
-            <Icon name="power" />
-          </LogoutButton>
-        </UserWrapper>
-      </Header>
-      <HighLightCards>
-        <HighlightCard
-          title="Entradas"
-          amount="R$ 17.400,00"
-          lastTransaction="Última entrada dia 13 de abril"
-          type="up"
-        />
-        <HighlightCard
-          title="Saídas"
-          amount="R$ 1.259,00"
-          lastTransaction="Última saída dia 03 de abril"
-          type="down"
-        />
-        <HighlightCard
-          title="Entradas"
-          amount="R$ 16.141,00"
-          lastTransaction="01 à 06  de abril"
-          type="total"
-        />
-      </HighLightCards>
-      <Transactions>
-        <Title>Listagem</Title>
-        <TransacionList
-          data={data}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <TransactionCard data={item} />}
-        />
-      </Transactions>
+            <HighlightCard
+              title="Saídas"
+              amount={highlightData.expensives.amount}
+              lastTransaction="Última saída dia 03 de abril"
+              type="down"
+            />
+            <HighlightCard
+              title="Entradas"
+              amount={highlightData.total.amount}
+              lastTransaction="01 à 06  de abril"
+              type="total"
+            />
+          </HighLightCards>
+          <Transactions>
+            <Title>Listagem</Title>
+            <TransacionList
+              data={transactions}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <TransactionCard data={item} />}
+            />
+          </Transactions>
+        </>
+      )}
     </Container>
   );
 }
