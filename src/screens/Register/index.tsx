@@ -9,6 +9,7 @@ import { Button } from "../../components/Form/Button";
 import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
 import { InputForm } from "../../components/Form/InputForm";
 import { TransacionCardButton } from "../../components/Form/TransactionCardButton";
+import { useAuth } from "../../hooks/auth";
 import { CategorySelect } from "../CategorySelect";
 import { FormData } from "./interfaces";
 import { schema } from "./schema";
@@ -23,6 +24,7 @@ import {
 
 export function Register() {
   const navigation = useNavigation();
+  const { user } = useAuth();
 
   const [category, setCategory] = useState({
     key: "category",
@@ -49,7 +51,7 @@ export function Register() {
     setCategoryModalOpen(false);
   }
   async function handleRegister({ name, amount }: FormData) {
-    const dataKey = "@gofinances:transactions";
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
     if (!transactionType) return Alert.alert("Selecione o tipo da transação");
 
     if (category.key === "category")
