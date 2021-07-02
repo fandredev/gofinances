@@ -8,6 +8,8 @@
 
 ---
 <p align="center">
+      <img width=200px height=50% src="https://user-images.githubusercontent.com/49297012/124208651-5e8ef280-dabe-11eb-9072-372dca57aef1.jpeg" alt="White Mode Login">
+    <img width=200px height=50% src="https://user-images.githubusercontent.com/49297012/124208653-5fc01f80-dabe-11eb-85a9-7ce656e8e2f5.jpeg" alt="Dark Mode Login">
   <img width=200px height=50% src="https://user-images.githubusercontent.com/49297012/120712164-afe39c00-c496-11eb-9df5-e1b40e0dfcdd.jpeg" alt="Dark Mode List Finances">
   <img width=200px height=50% src="https://user-images.githubusercontent.com/49297012/120712165-afe39c00-c496-11eb-896d-1296af4bc2cf.jpeg" alt="White Mode List Finances">
   <img width=200px height=50% src="https://user-images.githubusercontent.com/49297012/120712161-aeb26f00-c496-11eb-92d5-10b8a5b92724.jpeg" alt="White Mode Register Finances">
